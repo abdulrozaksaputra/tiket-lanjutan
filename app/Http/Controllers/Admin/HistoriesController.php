@@ -10,7 +10,9 @@ class HistoriesController extends Controller
 {
     public function index()
     {
-        $histories = Order::latest()->get();
+        $histories = Order::with(['user', 'event', 'detailOrders.tiket'])
+            ->latest()
+            ->get();
         return view('admin.history.index', compact('histories'));
     }
 
@@ -18,5 +20,12 @@ class HistoriesController extends Controller
     {
         $order = Order::findOrFail($history);
         return view('admin.history.show', compact('order'));
+    }
+
+    public function destroy(string $history)
+    {
+        $order = Order::findOrFail($history);
+        $order->delete();
+        return redirect()->route('admin.histories.index')->with('success', 'Riwayat telah dihapus.');
     }
 }

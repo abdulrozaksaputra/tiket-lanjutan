@@ -23,6 +23,8 @@ Route::middleware('auth')->group(function () {
     // User Histories (Riwayat Pembelian)
     Route::get('/history', [App\Http\Controllers\User\HistoryController::class, 'index'])->name('history.index');
     Route::get('/history/{order}', [App\Http\Controllers\User\HistoryController::class, 'show'])->name('history.show');
+    Route::delete('/history/cleanup', [App\Http\Controllers\User\HistoryController::class, 'destroyAll'])->name('history.destroyAll');
+    Route::delete('/history/{order}', [App\Http\Controllers\User\HistoryController::class, 'destroy'])->name('history.destroy');
 
     // Checkout
     Route::post('/checkout', [App\Http\Controllers\User\CheckoutController::class, 'store'])->name('checkout.store');
@@ -41,7 +43,8 @@ Route::middleware('auth')->group(function () {
 
         // Histories
         Route::get('/histories', [HistoriesController::class, 'index'])->name('histories.index');
-        Route::get('/histories/{id}', [HistoriesController::class, 'show'])->name('histories.show');
+        Route::get('/histories/{history}', [HistoriesController::class, 'show'])->name('histories.show');
+        Route::delete('/histories/{history}', [HistoriesController::class, 'destroy'])->name('histories.destroy');
 
         // Payment Types
         Route::resource('payment-types', App\Http\Controllers\Admin\PaymentTypeController::class);

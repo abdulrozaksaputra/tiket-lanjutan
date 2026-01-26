@@ -4,6 +4,16 @@
             <div class="card-body">
                 <h2 class="card-title text-2xl mb-6">Edit Event</h2>
 
+                @if ($errors->any())
+                    <div class="alert alert-error mb-6">
+                        <ul class="list-disc list-inside">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
                 <form id="eventForm" class="space-y-4" method="post"
                     action="{{ route('admin.events.update', $event->id) }}" enctype="multipart/form-data">
                     @csrf
@@ -53,8 +63,7 @@
                         <select name="kategori_id" class="select select-bordered w-full" required>
                             <option value="" disabled selected>Pilih Kategori</option>
                             @foreach ($categories as $category)
-                                <option value="{{ $category->id }}"
-                                    {{ $category->id == $event->kategori_id ? 'selected' : '' }}>
+                                <option value="{{ $category->id }}" {{ $category->id == $event->kategori_id ? 'selected' : '' }}>
                                     {{ $category->nama }}
                                 </option>
                             @endforeach
@@ -83,8 +92,7 @@
                         <div class="avatar max-w-sm">
                             <div class="w-full rounded-lg">
                                 @if ($event->gambar)
-                                    <img id="previewImg" src="{{ asset('images/events/' . $event->gambar) }}"
-                                        alt="Preview">
+                                    <img id="previewImg" src="{{ asset('images/events/' . $event->gambar) }}" alt="Preview">
                                 @else
                                     <img id="previewImg" src="" alt="Preview">
                                 @endif
@@ -120,11 +128,11 @@
         const successAlert = document.getElementById('successAlert');
 
         // Preview gambar saat dipilih
-        fileInput.addEventListener('change', function(e) {
+        fileInput.addEventListener('change', function (e) {
             const file = e.target.files[0];
             if (file) {
                 const reader = new FileReader();
-                reader.onload = function(e) {
+                reader.onload = function (e) {
                     previewImg.src = e.target.result;
                     imagePreview.classList.remove('hidden');
                 };
@@ -133,7 +141,7 @@
         });
 
         // Handle reset
-        form.addEventListener('reset', function() {
+        form.addEventListener('reset', function () {
             imagePreview.classList.add('hidden');
             successAlert.classList.add('hidden');
         });

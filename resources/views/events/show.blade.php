@@ -2,7 +2,7 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10" x-data="{
              tickets: {
                  @foreach($event->tikets as $tiket)
-                     {{ $tiket->id }}: { qty: 0, price: {{ $tiket->harga }}, name: '{{ $tiket->nama }}', stock: {{ $tiket->stok }} },
+                     {{ $tiket->id }}: { qty: 0, price: {{ $tiket->harga }}, name: '{{ ucfirst($tiket->tipe) }}', stock: {{ $tiket->stok }} },
                  @endforeach
              },
              get totalItems() {
@@ -48,7 +48,7 @@
                     <div
                         class="rounded-xl overflow-hidden mb-8 bg-gray-50 aspect-video flex items-center justify-center relative group">
                         @if($event->gambar)
-                            <img src="{{ asset('storage/' . $event->gambar) }}" alt="{{ $event->judul }}"
+                            <img src="{{ asset('images/events/' . $event->gambar) }}" alt="{{ $event->judul }}"
                                 class="w-full h-full object-cover">
                         @else
                             <div class="flex items-center gap-2 text-gray-500">
@@ -104,8 +104,10 @@
                                 class="flex flex-col sm:flex-row justify-between items-start sm:items-center pb-6 border-b border-gray-100 last:border-0 last:pb-0">
                                 <!-- Left: Ticket Info -->
                                 <div class="mb-4 sm:mb-0">
-                                    <div class="font-medium text-gray-900 text-base mb-1">{{ $tiket->nama }}</div>
-                                    <div class="text-sm text-gray-500">Stok: {{ $tiket->stok }}</div>
+                                    <div class="font-bold text-gray-900 text-lg mb-1 leading-tight tracking-tight">
+                                        {{ ucfirst($tiket->tipe) }}
+                                    </div>
+                                    <div class="text-sm text-gray-500 font-medium">Stok: {{ $tiket->stok }}</div>
                                 </div>
 
                                 <!-- Right: Price & Controls -->
@@ -174,56 +176,56 @@
                     @auth
                         <!-- Checkout Form (Hidden, submitted via JS) -->
                         <div x-data="{ 
-                                showConfirmModal: false, 
-                                paymentTypeId: '',
-                                submitCheckout() {
-                                    if(!this.paymentTypeId) {
-                                        alert('Silakan pilih metode pembayaran');
-                                        return;
-                                    }
+                                        showConfirmModal: false, 
+                                        paymentTypeId: '',
+                                        submitCheckout() {
+                                            if(!this.paymentTypeId) {
+                                                alert('Silakan pilih metode pembayaran');
+                                                return;
+                                            }
 
-                                    // Show confirmation modal
-                                    this.showConfirmModal = true;
-                                },
-                                processPayment() {
-                                    // Prepare data
-                                    let formData = {
-                                        event_id: {{ $event->id }},
-                                        payment_type_id: this.paymentTypeId,
-                                        tickets: []
-                                    };
-
-                                    for (const [id, ticket] of Object.entries(this.tickets)) {
-                                        if (ticket.qty > 0) {
-                                            formData.tickets.push({ id: id, qty: ticket.qty });
-                                        }
-                                    }
-
-                                    fetch('{{ route('checkout.store') }}', {
-                                        method: 'POST',
-                                        headers: {
-                                            'Content-Type': 'application/json',
-                                            'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content,
-                                            'Accept': 'application/json'
+                                            // Show confirmation modal
+                                            this.showConfirmModal = true;
                                         },
-                                        body: JSON.stringify(formData)
-                                    })
-                                    .then(response => response.json())
-                                    .then(data => {
-                                        if(data.success) {
-                                            window.location.href = data.redirect_url;
-                                        } else {
-                                            alert('Terjadi kesalahan: ' + (data.message || 'Unknown error'));
-                                            this.showConfirmModal = false;
+                                        processPayment() {
+                                            // Prepare data
+                                            let formData = {
+                                                event_id: {{ $event->id }},
+                                                payment_type_id: this.paymentTypeId,
+                                                tickets: []
+                                            };
+
+                                            for (const [id, ticket] of Object.entries(this.tickets)) {
+                                                if (ticket.qty > 0) {
+                                                    formData.tickets.push({ id: id, qty: ticket.qty });
+                                                }
+                                            }
+
+                                            fetch('{{ route('checkout.store') }}', {
+                                                method: 'POST',
+                                                headers: {
+                                                    'Content-Type': 'application/json',
+                                                    'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content,
+                                                    'Accept': 'application/json'
+                                                },
+                                                body: JSON.stringify(formData)
+                                            })
+                                            .then(response => response.json())
+                                            .then(data => {
+                                                if(data.success) {
+                                                    window.location.href = data.redirect_url;
+                                                } else {
+                                                    alert('Terjadi kesalahan: ' + (data.message || 'Unknown error'));
+                                                    this.showConfirmModal = false;
+                                                }
+                                            })
+                                            .catch(error => {
+                                                console.error('Error:', error);
+                                                alert('Terjadi kesalahan sistem.');
+                                                this.showConfirmModal = false;
+                                            });
                                         }
-                                    })
-                                    .catch(error => {
-                                        console.error('Error:', error);
-                                        alert('Terjadi kesalahan sistem.');
-                                        this.showConfirmModal = false;
-                                    });
-                                }
-                            }" x-show="totalItems > 0">
+                                    }" x-show="totalItems > 0">
 
                             <div class="mb-4">
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Metode Pembayaran</label>

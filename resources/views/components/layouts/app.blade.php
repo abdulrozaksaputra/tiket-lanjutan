@@ -29,6 +29,10 @@
                 </div>
                 <div class="flex items-center gap-3">
                     @auth
+                        <a href="{{ route('history.index') }}"
+                            class="text-sm font-semibold text-gray-700 hover:text-indigo-600 transition-colors mr-2 hidden sm:block">
+                            Riwayat Pembelian
+                        </a>
                         <div class="relative" x-data="{ open: false }">
                             <button @click="open = !open"
                                 class="flex items-center gap-2 text-sm font-bold text-gray-900 focus:outline-none p-2">

@@ -13,10 +13,10 @@ class EventController extends Controller
      * Display a listing of the resource.
      */
     public function index()
-{
-	$events = Event::all();
-	return view('admin.event.index', compact('events'));
-}
+    {
+        $events = Event::all();
+        return view('admin.event.index', compact('events'));
+    }
 
     /**
      * Show the form for creating a new resource.
@@ -38,13 +38,17 @@ class EventController extends Controller
             'tanggal_waktu' => 'required|date',
             'lokasi' => 'required|string|max:255',
             'kategori_id' => 'required|exists:kategoris,id',
-            'gambar' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'gambar' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:5120',
         ]);
 
         // Handle file upload
         if ($request->hasFile('gambar')) {
-            $imageName = time().'.'.$request->gambar->extension();
-            $request->gambar->move(public_path('images/events'), $imageName);
+            $destinationPath = public_path('images/events');
+            if (!file_exists($destinationPath)) {
+                mkdir($destinationPath, 0777, true);
+            }
+            $imageName = time() . '.' . $request->gambar->extension();
+            $request->gambar->move($destinationPath, $imageName);
             $validatedData['gambar'] = $imageName;
         }
 
@@ -91,13 +95,23 @@ class EventController extends Controller
                 'tanggal_waktu' => 'required|date',
                 'lokasi' => 'required|string|max:255',
                 'kategori_id' => 'required|exists:kategoris,id',
-                'gambar' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+                'gambar' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:5120',
             ]);
 
             // Handle file upload
             if ($request->hasFile('gambar')) {
-                $imageName = time().'.'.$request->gambar->extension();
-                $request->gambar->move(public_path('images/events'), $imageName);
+                $destinationPath = public_path('images/events');
+                if (!file_exists($destinationPath)) {
+                    mkdir($destinationPath, 0777, true);
+                }
+
+                // Delete old image
+                if ($event->gambar && file_exists($destinationPath . '/' . $event->gambar)) {
+                    unlink($destinationPath . '/' . $event->gambar);
+                }
+
+                $imageName = time() . '.' . $request->gambar->extension();
+                $request->gambar->move($destinationPath, $imageName);
                 $validatedData['gambar'] = $imageName;
             }
 

@@ -6,7 +6,7 @@
         <!-- Image Container -->
         <div class="relative aspect-[4/3] overflow-hidden rounded-lg mb-4 bg-gray-100">
             @if($image)
-                <img src="{{ asset('storage/' . $image) }}" alt="{{ $title }}"
+                <img src="{{ asset('images/events/' . $image) }}" alt="{{ $title }}"
                     class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
             @else
                 <div class="w-full h-full flex items-center justify-center text-gray-400">

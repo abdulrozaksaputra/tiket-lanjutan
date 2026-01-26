@@ -30,4 +30,22 @@ class HistoryController extends Controller
 
         return view('user.history.show', compact('order'));
     }
+
+    public function destroy(Order $order)
+    {
+        if ($order->user_id !== Auth::id()) {
+            abort(403);
+        }
+
+        $order->delete();
+
+        return redirect()->route('history.index')->with('success', 'Riwayat telah dihapus.');
+    }
+
+    public function destroyAll()
+    {
+        Order::where('user_id', Auth::id())->delete();
+
+        return redirect()->route('history.index')->with('success', 'Riwayat telah dihapus.');
+    }
 }

@@ -8,7 +8,7 @@
                 <div
                     class="w-full sm:w-1/3 bg-gray-100 rounded-xl overflow-hidden aspect-video sm:aspect-[4/3] flex-shrink-0">
                     @if($order->event && $order->event->gambar)
-                        <img src="{{ asset('storage/' . $order->event->gambar) }}" alt="{{ $order->event->judul }}"
+                        <img src="{{ asset('images/events/' . $order->event->gambar) }}" alt="{{ $order->event->judul }}"
                             class="w-full h-full object-cover">
                     @else
                         <div class="w-full h-full flex items-center justify-center text-gray-400">
@@ -60,7 +60,7 @@
                         <div
                             class="flex justify-between items-center py-3 border-b border-gray-200 last:border-0 border-dashed">
                             <div>
-                                <div class="font-medium text-gray-900">{{ $detail->tiket->nama }}</div>
+                                <div class="font-medium text-gray-900">{{ ucfirst($detail->tiket->tipe) }}</div>
                                 <div class="text-sm text-gray-500">Qty: {{ $detail->jumlah }}</div>
                             </div>
                             <div class="font-medium text-gray-900">
